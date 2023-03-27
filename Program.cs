@@ -1,3 +1,4 @@
+using CVApplicationsManager.Configurations;
 using CVApplicationsManager.Contracts;
 using CVApplicationsManager.Data;
 using CVApplicationsManager.Repositories;
@@ -13,6 +14,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddControllersWithViews();
+
+// Inject Automapper Service
+builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 
 // Inject contracts and repositories
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
