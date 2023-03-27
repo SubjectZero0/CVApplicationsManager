@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CVApplicationsManager.Repositories
 {
-    public class CvApplicationsRepository : GenericRepository<CvApplicationModel>, ICvApplicationRepository
+    public class DegreesRepository : GenericRepository<DegreesModel>, IDegreesRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public CvApplicationsRepository(ApplicationDbContext context) : base(context)
+        public DegreesRepository(ApplicationDbContext context) : base(context)
         {
             this._context = context;
         }

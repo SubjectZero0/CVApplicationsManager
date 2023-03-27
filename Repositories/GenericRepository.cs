@@ -62,12 +62,7 @@ namespace CVApplicationsManager.Repositories
             }
             var entity = await _context.Set<T>().FindAsync(id); //set<T>() is a generic table relative to T. Any table used with this method
 
-            if (entity is null)
-            {
-                throw new Exception("Not found");
-            }
-
-            return entity;
+            return entity is null ? throw new Exception("Not found") : entity;
         }
 
         public async Task UpdateAsync(T entity)
