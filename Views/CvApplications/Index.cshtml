@@ -12,9 +12,6 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CvBlob)
-            </th>
             
             <th>
                 @Html.DisplayNameFor(model => model.Firstname)
@@ -38,10 +35,6 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.CvBlob)
-            </td>
-            
-            <td>
                 @Html.DisplayFor(modelItem => item.Firstname)
             </td>
             <td>
@@ -59,9 +52,37 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+                <a class="delete-btn" data-id="@item.Id">Delete</a>
+                </td>
         </tr>
 }
     </tbody>
 </table>
+
+<form id="deleteForm" asp-action="Delete">
+    <input type="hidden" id="applicationId" name="Id" />
+</form>
+
+
+    @section Scripts{
+    <script>
+    $(function(){
+        $(".delete-btn").click(function(e){
+            var button = $(this);
+            swal({
+                title: "Are you sure?",
+                text: "Are you sure you want to DELETE this permanently?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then(function(confirm){
+                    if (confirm){
+                        var id = button.data("id");
+                        $("#applicationId").val(id);
+                        $("#deleteForm").submit();
+                    };
+                });
+        });
+    });
+    </script>
+    }
