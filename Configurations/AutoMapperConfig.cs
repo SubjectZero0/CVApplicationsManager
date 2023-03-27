@@ -6,7 +6,7 @@ namespace CVApplicationsManager.Configurations
 {
     public class AutoMapperConfig : Profile
     {
-        protected internal AutoMapperConfig()
+        public AutoMapperConfig()
         {
             CreateMap<CvApplicationModel,CvApplicationViewModel>().ReverseMap();
             CreateMap<DegreesModel, DegreesViewModel>().ReverseMap();
