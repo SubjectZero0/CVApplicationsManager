@@ -8,43 +8,40 @@ using Microsoft.EntityFrameworkCore;
 using CVApplicationsManager.Data;
 using CVApplicationsManager.Models;
 using CVApplicationsManager.Contracts;
+using AutoMapper;
+using CVApplicationsManager.Views;
 
 namespace CVApplicationsManager.Controllers
 {
     public class CvApplicationsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly ICvApplicationRepository _cvApplicationRepository;
+        private readonly IMapper _mapper;
 
-        public CvApplicationsController(ApplicationDbContext context, ICvApplicationRepository cvApplicationRepository)
+        public CvApplicationsController(ICvApplicationRepository cvApplicationRepository,
+                                        IMapper mapper)
         {
-            _context = context;
             this._cvApplicationRepository = cvApplicationRepository;
+            this._mapper = mapper;
         }
 
         // GET: CvApplications
         public async Task<IActionResult> Index()
         {
             var applications = await _cvApplicationRepository.GetAllAsync();
-            return View(applications);
+            var applicationsVM = _mapper.Map<CvApplicationViewModel>(applications);
+
+            return View(applicationsVM);
         }
 
         // GET: CvApplications/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.CvApplications == null)
-            {
-                return NotFound();
-            }
 
-            var cvApplicationModel = await _context.CvApplications
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (cvApplicationModel == null)
-            {
-                return NotFound();
-            }
+            var applications = await _cvApplicationRepository.GetAsync(id);
+            var applicationsVM = _mapper.Map<CvApplicationViewModel>(applications);
 
-            return View(cvApplicationModel);
+            return View(applicationsVM);
         }
 
         // GET: CvApplications/Create
