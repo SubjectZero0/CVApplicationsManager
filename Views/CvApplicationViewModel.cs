@@ -26,8 +26,10 @@ namespace CVApplicationsManager.Views
         [MinLength(10)]
         public string? Mobile { get; set; }
 
-        [Display(Name = "Degree Title")]
-        public DegreesViewModel? DegreeName { get; set; }
+        [Display(Name = "Education Degree")]
+        public DegreesViewModel? Degrees { get; set; }
+
+        [Display(Name = "Education Degree")]
         public int? DegreeId { get; set; }
 
         [Display(Name = "Upload your CV")]

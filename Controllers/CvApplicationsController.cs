@@ -17,12 +17,15 @@ namespace CVApplicationsManager.Controllers
     {
         private readonly ICvApplicationRepository _cvApplicationRepository;
         private readonly IMapper _mapper;
+        private readonly IDegreesRepository _degreesRepository;
 
         public CvApplicationsController(ICvApplicationRepository cvApplicationRepository,
-                                        IMapper mapper)
+                                        IMapper mapper,
+                                        IDegreesRepository degreesRepository)
         {
             this._cvApplicationRepository = cvApplicationRepository;
             this._mapper = mapper;
+            this._degreesRepository = degreesRepository;
         }
 
         // GET: CvApplications
@@ -37,7 +40,6 @@ namespace CVApplicationsManager.Controllers
         // GET: CvApplications/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-
             var applications = await _cvApplicationRepository.GetAsync(id);
             var applicationsVM = _mapper.Map<CvApplicationViewModel>(applications);
 
@@ -45,9 +47,13 @@ namespace CVApplicationsManager.Controllers
         }
 
         // GET: CvApplications/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var cvApplicationVM = new CvApplicationViewModel();
+            var degrees = await _degreesRepository.GetAllAsync();
+            ViewData["Degrees"] = new SelectList(degrees, "Id", "DegreeName");
+
+            return View(cvApplicationVM);
         }
 
         // POST: CvApplications/Create
@@ -68,97 +74,73 @@ namespace CVApplicationsManager.Controllers
             return View(applicationVM);
         }
 
-        // GET: CvApplications/Edit/5
-        //public async Task<IActionResult> Edit(int? id)
-        //{
-        //    if (id == null || _context.CvApplications == null)
-        //    {
-        //        return NotFound();
-        //    }
+        //GET: CvApplications/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            var cvApplication = await _cvApplicationRepository.GetAsync(id);
+            var cvApplicationVM = _mapper.Map<CvApplicationViewModel>(cvApplication);
 
-        //    var cvApplicationModel = await _context.CvApplications.FindAsync(id);
-        //    if (cvApplicationModel == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(cvApplicationModel);
-        //}
+            var degrees = await _degreesRepository.GetAllAsync();
+            ViewData["Degrees"] = new SelectList(degrees, "Id", "DegreeName");
 
-        //// POST: CvApplications/Edit/5
-        //// To protect from overposting attacks, enable the specific properties you want to bind to.
-        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(int id, [Bind("Id,CvBlob,DateCreated,Firstname,Lastname,Email,Mobile,DegreeId")] CvApplicationModel cvApplicationModel)
-        //{
-        //    if (id != cvApplicationModel.Id)
-        //    {
-        //        return NotFound();
-        //    }
+            return View(cvApplicationVM);
+        }
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(cvApplicationModel);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!CvApplicationModelExists(cvApplicationModel.Id))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(cvApplicationModel);
-        //}
+        // POST: CvApplications/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, CvApplicationViewModel cvApplicationVM)
+        {
+            if (id != cvApplicationVM.Id)
+            {
+                return NotFound();
+            }
 
-        //// GET: CvApplications/Delete/5
-        //public async Task<IActionResult> Delete(int? id)
-        //{
-        //    if (id == null || _context.CvApplications == null)
-        //    {
-        //        return NotFound();
-        //    }
+            var cvApplication = await _cvApplicationRepository.GetAsync(id);
 
-        //    var cvApplicationModel = await _context.CvApplications
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (cvApplicationModel == null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (cvApplication is null)
+            {
+                return NotFound();
+            }
 
-        //    return View(cvApplicationModel);
-        //}
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _mapper.Map(cvApplicationVM, cvApplication);
+                    await _cvApplicationRepository.UpdateAsync(cvApplication);
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!await CvApplicationExists(cvApplicationVM.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(cvApplicationVM);
+        }
 
-        //// POST: CvApplications/Delete/5
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DeleteConfirmed(int id)
-        //{
-        //    if (_context.CvApplications == null)
-        //    {
-        //        return Problem("Entity set 'ApplicationDbContext.CvApplications'  is null.");
-        //    }
-        //    var cvApplicationModel = await _context.CvApplications.FindAsync(id);
-        //    if (cvApplicationModel != null)
-        //    {
-        //        _context.CvApplications.Remove(cvApplicationModel);
-        //    }
-            
-        //    await _context.SaveChangesAsync();
-        //    return RedirectToAction(nameof(Index));
-        //}
+        // POST: CvApplications/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _cvApplicationRepository.DeleteAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
 
-        //private bool CvApplicationModelExists(int id)
-        //{
-        //  return (_context.CvApplications?.Any(e => e.Id == id)).GetValueOrDefault();
-        //}
+        private async Task<bool> CvApplicationExists(int id)
+        {
+            var cvApplicationExists = await _cvApplicationRepository.Exists(id);
+            return cvApplicationExists;
+        }
     }
 }

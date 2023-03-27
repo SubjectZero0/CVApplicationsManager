@@ -21,6 +21,7 @@ builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 // Inject contracts and repositories
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ICvApplicationRepository, CvApplicationsRepository>();
+builder.Services.AddScoped<IDegreesRepository, DegreesRepository>();
 
 var app = builder.Build();
 
