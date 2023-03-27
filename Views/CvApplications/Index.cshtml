@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CVApplicationsManager.Models.CvApplicationModel>
+﻿@model IEnumerable<CVApplicationsManager.Views.CvApplicationViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -15,9 +15,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.CvBlob)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateCreated)
-            </th>
+            
             <th>
                 @Html.DisplayNameFor(model => model.Firstname)
             </th>
@@ -42,9 +40,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.CvBlob)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateCreated)
-            </td>
+            
             <td>
                 @Html.DisplayFor(modelItem => item.Firstname)
             </td>
