@@ -28,8 +28,7 @@ namespace CVApplicationsManager.Repositories
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files", fileName);
                     application.CvBlob = filePath;
                 
-                    _context.CvApplications.Update(application);
-                    _context.SaveChanges();
+                    await UpdateAsync(application);
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
