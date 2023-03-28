@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <Folder Include="Data\DbSeeds\" />
+    <Folder Include="wwwroot\Files\" />
   </ItemGroup>
 
 </Project>

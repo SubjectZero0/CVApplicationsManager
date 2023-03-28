@@ -77,13 +77,13 @@ namespace CVApplicationsManager.Controllers
         //GET: CvApplications/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            var cvApplication = await _cvApplicationRepository.GetAsync(id);
-            var cvApplicationVM = _mapper.Map<CvApplicationViewModel>(cvApplication);
+            var application = await _cvApplicationRepository.GetAsync(id);
+            var applicationVM = _mapper.Map<CvApplicationViewModel>(application);
 
             var degrees = await _degreesRepository.GetAllAsync();
             ViewData["Degrees"] = new SelectList(degrees, "Id", "DegreeName");
 
-            return View(cvApplicationVM);
+            return View(applicationVM);
         }
 
         // POST: CvApplications/Edit/5
@@ -91,17 +91,17 @@ namespace CVApplicationsManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CvApplicationViewModel cvApplicationVM)
+        public async Task<IActionResult> Edit(int id, CvApplicationViewModel applicationVM, IFormFile? cvBlob)
         {
-            if (id != cvApplicationVM.Id)
+            if (id != applicationVM.Id)
             {
                 return NotFound();
             }
 
-            var cvApplication = await _cvApplicationRepository.GetAsync(id);
+            var application = await _cvApplicationRepository.GetAsync(id);
 
-            if (cvApplication is null)
-            {
+            if (application is null) 
+            { 
                 return NotFound();
             }
 
@@ -109,12 +109,28 @@ namespace CVApplicationsManager.Controllers
             {
                 try
                 {
-                    _mapper.Map(cvApplicationVM, cvApplication);
-                    await _cvApplicationRepository.UpdateAsync(cvApplication);
+                    applicationVM.DateCreated = application.DateCreated;
+                    
+
+                    if (cvBlob is null)
+                    {
+                        if (application.CvBlob is not null)
+                        {
+                            applicationVM.CvBlob = application.CvBlob;
+                        }
+
+                        _mapper.Map(applicationVM, application);
+                        await _cvApplicationRepository.UpdateAsync(application);
+                    }
+                   
+                    else
+                    {
+                        await _cvApplicationRepository.UploadFileEditAsync(cvBlob, application);
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await CvApplicationExists(cvApplicationVM.Id))
+                    if (!await CvApplicationExists(applicationVM.Id))
                     {
                         return NotFound();
                     }
@@ -125,7 +141,7 @@ namespace CVApplicationsManager.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(cvApplicationVM);
+            return View(applicationVM);
         }
 
         // POST: CvApplications/Delete/5
