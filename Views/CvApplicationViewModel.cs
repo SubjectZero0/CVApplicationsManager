@@ -35,8 +35,5 @@ namespace CVApplicationsManager.Views
         [Display(Name = "Upload your CV")]
         public string? CvBlob { get; set; }
 
-        [Display(Name = "Date of Creation")]
-        [DataType(DataType.Date)]
-        public DateTime DateCreated { get; set; }
     }
 }

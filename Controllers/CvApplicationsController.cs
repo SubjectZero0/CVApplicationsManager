@@ -91,9 +91,9 @@ namespace CVApplicationsManager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CvApplicationViewModel applicationVM, IFormFile? cvBlob)
+        public async Task<IActionResult> Edit(int id, CvApplicationViewModel inputApplicationVM, IFormFile? cvBlob)
         {
-            if (id != applicationVM.Id)
+            if (id != inputApplicationVM.Id)
             {
                 return NotFound();
             }
@@ -108,18 +108,16 @@ namespace CVApplicationsManager.Controllers
             if (ModelState.IsValid)
             {
                 try
-                {
-                    applicationVM.DateCreated = application.DateCreated;
-                    
+                {  
 
                     if (cvBlob is null)
                     {
                         if (application.CvBlob is not null)
                         {
-                            applicationVM.CvBlob = application.CvBlob;
+                            inputApplicationVM.CvBlob = _mapper.Map<CvApplicationViewModel>(application).CvBlob;
                         }
 
-                        _mapper.Map(applicationVM, application);
+                        _mapper.Map(inputApplicationVM, application);
                         await _cvApplicationRepository.UpdateAsync(application);
                     }
                    
@@ -130,7 +128,7 @@ namespace CVApplicationsManager.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await CvApplicationExists(applicationVM.Id))
+                    if (!await CvApplicationExists(inputApplicationVM.Id))
                     {
                         return NotFound();
                     }
@@ -141,7 +139,7 @@ namespace CVApplicationsManager.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(applicationVM);
+            return View(inputApplicationVM);
         }
 
         // POST: CvApplications/Delete/5
