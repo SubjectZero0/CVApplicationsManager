@@ -6,6 +6,6 @@ namespace CVApplicationsManager.Contracts
 {
     public interface ICvApplicationRepository : IGenericRepository<CvApplicationModel>
     {
-    Task<bool> UploadFileEditAsync(IFormFile? file, CvApplicationModel application);
+        Task UpdateOrCreateWithFile(IFormFile? file, CvApplicationModel application);
     }
 }

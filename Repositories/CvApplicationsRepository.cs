@@ -14,35 +14,52 @@ namespace CVApplicationsManager.Repositories
             this._context = context;
         }
 
-        public async Task<bool> UploadFileEditAsync(IFormFile? file, CvApplicationModel application)
+        /// <summary>
+        /// Method that Updates or Adds an entity with a file uploaded.
+        /// Checks if the file to be uploaded is not empty. Then checks if the file is a pdf or word document, as only those are accepted.
+        /// If an entity with the passed Id exists, the method perfoms an update. Else it creates a new entity in the database.
+        /// Finally copies the uploaded file locally.
+        /// </summary>
+        /// <param name="file">The file that comes from a Create or Edit Form, if any.</param>
+        /// <param name="application">The entity thats either going to be updated, or created.</param>
+        /// <returns>If the user uploads a file, an entity is either created or updated in the database.</returns>
+        /// <exception cref="Exception"> If the file is not a pdf or word doc an exception is thrown.</exception>
+        public async Task UpdateOrCreateWithFile(IFormFile? file, CvApplicationModel application)
         {
-            if (file != null && file.Length > 0)
+            if (file is not null && file.Length > 0)
             {
+                var fileType = file.ContentType; // get the format of the file.
 
-                var fileType = file.ContentType; // get the format of the file
-
-                // check if file format is pdf or word
+                // check if file format is pdf or word.
                 if (fileType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || fileType == "application/pdf")
                 {
+                    // get the file path and pass it to the database.
                     var fileName = file.FileName;
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files", fileName);
                     application.CvBlob = filePath;
-                
-                    await UpdateAsync(application);
 
+                    // if any entities exist with the  same Id Update. Else Add.
+                    if (_context.CvApplications.Any(x => x.Id == application.Id))
+                    {
+                        await UpdateAsync(application);
+                    }
+                    else
+                    {
+                        await AddAsync(application);
+                    }
+
+                    // copy file to the specified path.
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await file.CopyToAsync(fileStream);
                     }
-                    return true;
                 }
-
-                // if other than pdf or word...
-                throw new Exception("Uploaded files can only be of PDF or Word formats.");
-
+                else
+                {
+                    // Reaching here means the file is not a pdf or word doc.
+                    throw new Exception("Uploaded files can only be of PDF or Word formats.");
+                }
             }
-
-            return false;
         }
     }
 }
