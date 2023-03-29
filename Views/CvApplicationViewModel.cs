@@ -1,4 +1,5 @@
 ﻿using CVApplicationsManager.Models;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -24,6 +25,7 @@ namespace CVApplicationsManager.Views
         [Display(Name = "Mobile Number")]
         [MaxLength(10)]
         [MinLength(10)]
+        [DataType(DataType.PhoneNumber)]
         public string? Mobile { get; set; }
 
         [Display(Name = "Education Degree")]
