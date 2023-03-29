@@ -10,6 +10,12 @@ namespace CVApplicationsManager.Data
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.ApplyConfiguration(new DegreesConfig()); //initializes DbContext with Degrees
+        }
+
         public DbSet<DegreesModel> Degrees { get; set; }
 
         public DbSet<CvApplicationModel> CvApplications { get; set; }
