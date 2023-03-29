@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\DbSeeds\**" />
+    <Content Remove="Data\DbSeeds\**" />
+    <EmbeddedResource Remove="Data\DbSeeds\**" />
+    <None Remove="Data\DbSeeds\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.15" />
@@ -29,7 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\DbSeeds\" />
     <Folder Include="wwwroot\Files\" />
   </ItemGroup>
 
