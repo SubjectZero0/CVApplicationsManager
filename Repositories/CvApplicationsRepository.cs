@@ -2,6 +2,7 @@
 using CVApplicationsManager.Data;
 using CVApplicationsManager.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace CVApplicationsManager.Repositories
 {
@@ -22,7 +23,6 @@ namespace CVApplicationsManager.Repositories
         /// </summary>
         /// <param name="file">The file that comes from a Create or Edit Form, if any.</param>
         /// <param name="application">The entity thats either going to be updated, or created.</param>
-        /// <returns>If the user uploads a file, an entity is either created or updated in the database.</returns>
         /// <exception cref="Exception"> If the file is not a pdf or word doc an exception is thrown.</exception>
         public async Task UpdateOrCreateWithFile(IFormFile? file, CvApplicationModel application)
         {
@@ -38,8 +38,8 @@ namespace CVApplicationsManager.Repositories
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files", fileName);
                     application.CvBlob = filePath;
 
-                    // if any entities exist with the  same Id Update. Else Add.
-                    if (_context.CvApplications.Any(x => x.Id == application.Id))
+                    // if any entities exist with the  same Id, Update. Else Add.
+                    if (await _context.CvApplications.AnyAsync(x => x.Id == application.Id))
                     {
                         await UpdateAsync(application);
                     }
