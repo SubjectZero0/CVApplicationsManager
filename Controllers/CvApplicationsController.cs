@@ -125,6 +125,7 @@ namespace CVApplicationsManager.Controllers
                     }
                     else
                     {
+                        _mapper.Map(applicationVM, application);
                         await _cvApplicationRepository.UpdateOrCreateWithFile(inputFile, application);
                     }
                 }
