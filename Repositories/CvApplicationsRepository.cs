@@ -31,7 +31,7 @@ namespace CVApplicationsManager.Repositories
                 var fileType = file.ContentType; // get the format of the file.
 
                 // check if file format is pdf or word.
-                if (fileType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || fileType == "application/pdf")
+                if (fileType is "application/vnd.openxmlformats-officedocument.wordprocessingml.document" || fileType is "application/pdf")
                 {
                     // get the file path and pass it to the database.
                     var fileName = file.FileName;
