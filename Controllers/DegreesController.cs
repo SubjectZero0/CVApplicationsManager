@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using CVApplicationsManager.Contracts;
+using CVApplicationsManager.Models;
+using CVApplicationsManager.Views;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,79 +18,74 @@ namespace CVApplicationsManager.Controllers
             this._mapper = mapper;
         }
 
-        // GET: DegreesController
-        public ActionResult Index()
+        // GET: Degrees
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var degrees = await _degreesRepository.GetAllAsync();
+            var degreesVM = _mapper.Map<List<DegreesViewModel>>(degrees);
+
+            return View(degreesVM);
         }
 
-        // GET: DegreesController/Details/5
-        public ActionResult Details(int id)
+        // GET: Degrees/Create
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var degree = new CreateDegreeViewModel();
+            return View(degree);
         }
 
-        // GET: DegreesController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: DegreesController/Create
+        // POST: Degrees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create(CreateDegreeViewModel degreeVM)
         {
-            try
+            if (ModelState.IsValid)
             {
+               
+                var degree = _mapper.Map<DegreesModel>(degreeVM);
+
+                await _degreesRepository.AddAsync(degree);
+
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(degreeVM);
         }
 
-        // GET: DegreesController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: Degrees/Edit/5
+        public async Task<IActionResult> Edit(int id)
         {
-            return View();
+            var degree = await _degreesRepository.GetAsync(id);
+            var degreeVM = _mapper.Map<EditDegreeViewModel>(degree);
+
+            return View(degreeVM);
         }
 
-        // POST: DegreesController/Edit/5
+        // POST: Degrees/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Edit(int id, EditDegreeViewModel degreeVM)
         {
-            try
+            var degree = await _degreesRepository.GetAsync(id);
+
+            if (ModelState.IsValid)
             {
+                _mapper.Map(degreeVM, degree);
+                await _degreesRepository.UpdateAsync(degree);
+
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+
+            return View(degreeVM);
         }
 
-        // GET: DegreesController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: DegreesController/Delete/5
+        // POST: Degrees/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await _degreesRepository.DeleteUnusedAsync(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

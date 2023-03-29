@@ -10,6 +10,8 @@ namespace CVApplicationsManager.Configurations
         {
             CreateMap<CvApplicationModel,CvApplicationViewModel>().ReverseMap();
             CreateMap<DegreesModel, DegreesViewModel>().ReverseMap();
+            CreateMap<DegreesModel, CreateDegreeViewModel>().ReverseMap();
+            CreateMap<DegreesModel, EditDegreeViewModel>().ReverseMap();
         }
     }
 }

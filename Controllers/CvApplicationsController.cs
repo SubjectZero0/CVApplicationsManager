@@ -40,7 +40,7 @@ namespace CVApplicationsManager.Controllers
         // GET: CvApplications/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            var applications = await _cvApplicationRepository.GetAsync(id);
+            var applications = await _cvApplicationRepository.GetAsync(id);         
             var applicationsVM = _mapper.Map<CvApplicationViewModel>(applications);
 
             return View(applicationsVM);
