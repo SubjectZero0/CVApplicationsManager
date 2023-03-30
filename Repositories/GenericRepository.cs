@@ -1,6 +1,7 @@
 ﻿using CVApplicationsManager.Contracts;
 using CVApplicationsManager.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace CVApplicationsManager.Repositories
 {
@@ -61,6 +62,11 @@ namespace CVApplicationsManager.Repositories
                 throw new Exception("Not found");
             }
             var entity = await _context.Set<T>().FindAsync(id); //set<T>() is a generic table relative to T. Any table used with this method
+
+            if (entity is null)
+            {
+                throw new Exception($"No records found with the Id : {id}");
+            }
 
             return entity is null ? throw new Exception("Not found") : entity;
         }
