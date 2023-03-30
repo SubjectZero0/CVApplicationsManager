@@ -35,7 +35,7 @@ namespace CVApplicationsManager.Repositories
                 {
                     // get the file path and pass it to the database.
                     var fileName = file.FileName;
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Files", fileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", fileName);
 
                     // if the path doesnt exist -> create it -> assign it to application.CvBlob
                     // this approach needs admin rights for write.

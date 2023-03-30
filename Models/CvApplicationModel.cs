@@ -1,6 +1,6 @@
 ﻿namespace CVApplicationsManager.Models
 {
-    public class CvApplicationModel : AppllicantModel
+    public class CvApplicationModel : ApplicantModel
     {
         public int Id { get; set; }
 

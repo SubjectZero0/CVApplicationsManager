@@ -2,7 +2,7 @@
 
 namespace CVApplicationsManager.Models
 {
-    public class AppllicantModel
+    public class ApplicantModel
     {
         public string Firstname { get; set; }
 
