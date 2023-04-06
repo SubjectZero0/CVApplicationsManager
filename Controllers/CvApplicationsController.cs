@@ -31,16 +31,16 @@ namespace CVApplicationsManager.Controllers
         // GET: CvApplications
         public async Task<IActionResult> Index()
         {
-            var applications = await _cvApplicationRepository.GetAllAsync();
+            var applications = await _cvApplicationRepository.GetAllWithDegreesAsync();
             var applicationsVM = _mapper.Map<List<CvApplicationViewModel>>(applications);
 
             return View(applicationsVM);
         }
 
         // GET: CvApplications/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            var applications = await _cvApplicationRepository.GetAsync(id);         
+            var applications = await _cvApplicationRepository.GetWithDegreesAsync(id);
             var applicationsVM = _mapper.Map<CvApplicationViewModel>(applications);
 
             return View(applicationsVM);

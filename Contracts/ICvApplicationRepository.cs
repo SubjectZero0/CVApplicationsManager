@@ -7,5 +7,9 @@ namespace CVApplicationsManager.Contracts
     public interface ICvApplicationRepository : IGenericRepository<CvApplicationModel>
     {
         Task UpdateOrCreateWithFile(IFormFile? file, CvApplicationModel application);
+
+        Task<List<CvApplicationModel>> GetAllWithDegreesAsync();
+
+        Task<CvApplicationModel> GetWithDegreesAsync(int id);
     }
 }

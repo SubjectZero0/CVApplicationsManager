@@ -16,6 +16,29 @@ namespace CVApplicationsManager.Repositories
         }
 
         /// <summary>
+        /// Method to GET all applications including the nested degree
+        /// </summary>
+        /// <returns>List of CvApplicationModel entities</returns>
+        public async Task<List<CvApplicationModel>> GetAllWithDegreesAsync()
+        {
+            var applications = await _context.CvApplications.Include(x => x.Degree).ToListAsync();
+            return applications;
+        }
+
+        /// <summary>
+        /// Method to GET a specific application including the nested degree
+        /// </summary>
+        /// <returns>CvApplicationModel entity</returns>
+        public async Task<CvApplicationModel> GetWithDegreesAsync(int id)
+        {
+            var application = await _context.CvApplications.Where(q => q.Id == id)
+                .Include(x => x.Degree)
+                .FirstOrDefaultAsync();
+
+            return application;
+        }
+
+        /// <summary>
         /// Method that Updates or Adds an entity with a file uploaded.
         /// Checks if the file to be uploaded is not empty. Then checks if the file is a pdf or word document, as only those are accepted.
         /// If an entity with the passed Id exists, the method perfoms an update. Else it creates a new entity in the database.
@@ -37,19 +60,19 @@ namespace CVApplicationsManager.Repositories
                     var fileName = file.FileName;
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\Files", fileName);
 
-                    // if the path doesnt exist -> create it -> assign it to application.CvBlob
+                    // if the path doesnt exist -> create it -> assign name to application.CvBlob
                     // this approach needs admin rights for write.
                     //if (!Directory.Exists(filePath))
                     //{
                     //    Directory.CreateDirectory(filePath);
-                    //    application.CvBlob = filePath;
+                    //    application.CvBlob = fileName;
                     //}
                     //else // just assign it to application.CvBlob
                     //{
-                    //    application.CvBlob = filePath;
+                    //    application.CvBlob = fileName;
                     //}
 
-                    application.CvBlob = filePath;
+                    application.CvBlob = fileName;
 
                     // if any entities exist with the  same Id, Update. Else Add.
                     if (await _context.CvApplications.AnyAsync(x => x.Id == application.Id))
