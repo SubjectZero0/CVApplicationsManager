@@ -8,17 +8,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// Inject DB service
+// Add DB service
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddControllersWithViews();
 
-// Inject Automapper Service
+// Add Automapper Service
 builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 
-// Inject contracts and repositories
+// Add contracts and repositories
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ICvApplicationRepository, CvApplicationsRepository>();
 builder.Services.AddScoped<IDegreesRepository, DegreesRepository>();
@@ -35,6 +35,14 @@ else
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate();
 }
 
 app.UseHttpsRedirection();
