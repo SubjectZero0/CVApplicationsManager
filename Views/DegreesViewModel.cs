@@ -9,6 +9,7 @@ namespace CVApplicationsManager.Views
         public int Id { get; set; }
 
         [Display(Name = "Degree Title")]
+        [MaxLength(20)]
         public string? DegreeName { get; set; }
     }
 }
